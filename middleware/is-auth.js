@@ -8,7 +8,6 @@ module.exports = (req, res, next) => {
   }
   const token = authHeader.split(" ")[1];
   let decodedToken;
-  console.log(token);
   try {
     decodedToken = jwt.verify(token, "somesupersecretsecret");
   } catch (err) {
@@ -21,6 +20,5 @@ module.exports = (req, res, next) => {
   }
   req.userId = decodedToken.userId;
   req.isAuth = true;
-  console.log("authorized");
   next();
 };
