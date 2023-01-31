@@ -1,5 +1,4 @@
 const path = require("path");
-const fs = require("fs");
 
 const express = require("express");
 const bodyParser = require("body-parser");
@@ -11,6 +10,7 @@ const { graphqlHTTP } = require("express-graphql");
 const graphqlSchema = require("./graphql/schema");
 const graphqlResolver = require("./graphql/resolvers");
 const auth = require("./middleware/is-auth");
+const { clearImage } = require("./util/file");
 
 const { v4: uuidv4 } = require("uuid");
 
@@ -69,7 +69,7 @@ app.use((req, res, next) => {
 app.use(auth);
 
 app.put("/post-image", (req, res, next) => {
-  console.log("Post image triggered");
+  console.log(" triggered");
   if (!req.isAuth) {
     throw new Error("not authenticated");
   }
@@ -80,12 +80,10 @@ app.put("/post-image", (req, res, next) => {
     clearImage(req.body.oldPath);
   }
   console.log(req.file.path);
-  return res
-    .status(201)
-    .json({
-      message: "file stored",
-      filePath: req.file.path.replace("\\", "/"),
-    });
+  return res.status(201).json({
+    message: "file stored",
+    filePath: req.file.path.replace("\\", "/"),
+  });
 });
 
 app.use(
@@ -124,8 +122,3 @@ mongoose
     console.log("Connected!");
   })
   .catch((err) => console.log(err));
-
-const clearImage = (filePath) => {
-  filePath = path.join(__dirname, "..", filePath);
-  fs.unlink(filePath, (err) => console.log(err));
-};
